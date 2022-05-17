@@ -1,0 +1,21 @@
+<table id="example2" class="table table-bordered table-hover">
+  <thead>
+    <tr>
+      <th>Nama</th>
+      <th>Pajak</th>
+      <th>Phone Numer</th>
+      <th>Status</th>
+      <th>coinName</th>
+      <th>coinQuantity</th>
+    </tr>
+  </thead>
+  <tbody>
+    <td><%= detailTransactions.name %></td>
+    <td><%= detailTransactions.tax %></td>
+    <td><%= detailTransactions.historyUser.phoneNumber %></td>
+    <td><%= detailTransactions.status %></td>
+    <td><%= detailTransactions.historyVoucherTopup.coinName %></td>
+    <td><%= detailTransactions.historyVoucherTopup.coinQuantity %></td>
+
+  </tbody>
+</table>
