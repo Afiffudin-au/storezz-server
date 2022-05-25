@@ -55,7 +55,6 @@ module.exports = {
   checkout: async (req, res) => {
     try {
       const { accountUser, name, nominal, voucher, payment, bank } = req.body
-      console.log(voucher)
       const res_voucher = await Voucher.findOne({ _id: voucher })
         .select('name category _id thumbnail user')
         .populate('category')

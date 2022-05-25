@@ -4,6 +4,7 @@ const Nominal = require('../nominal/model')
 const path = require('path')
 const fs = require('fs')
 const config = require('../../config')
+const cloudinary = require('../../utils/cloudinary')
 module.exports = {
   index: async (req, res) => {
     try {
@@ -46,6 +47,7 @@ module.exports = {
       const { name, category, nominals } = req.body
       if (req.file) {
         let tmp_path = req.file.path
+        const result = await cloudinary.uploader.upload(req.file.path)
         let originalExt =
           req.file.originalname.split('.')[
             req.file.originalname.split('.').length - 1
@@ -64,7 +66,8 @@ module.exports = {
               name,
               category,
               nominals,
-              thumbnail: filename,
+              thumbnail: result.secure_url,
+              cloudinary_id: result.public_id,
             })
             await voucher.save()
             req.flash('alertMessage', 'Berhasil tambah voucher')
@@ -81,7 +84,8 @@ module.exports = {
           name,
           category,
           nominals,
-          thumbnail: filename,
+          thumbnail: result.secure_url,
+          cloudinary_id: result.public_id,
         })
         await voucher.save()
         req.flash('alertMessage', 'Berhasil tambah voucher')
@@ -136,11 +140,15 @@ module.exports = {
         src.on('end', async () => {
           try {
             const voucher = await Voucher.findOne({ _id: id })
-            let currentImage = `${config.rootPath}/public/uploads/${voucher.thumbnail}`
+            // Delete image from cloudinary
+            await cloudinary.uploader.destroy(voucher.cloudinary_id)
+            // Upload new image to cloudinary
+            const result = await cloudinary.uploader.upload(req.file.path)
+            // let currentImage = `${config.rootPath}/public/uploads/${voucher.thumbnail}`
             //Jika ada, file thumbnail akan didelete
-            if (fs.existsSync(currentImage)) {
-              fs.unlinkSync(currentImage)
-            }
+            // if (fs.existsSync(currentImage)) {
+            //   fs.unlinkSync(currentImage)
+            // }
             await Voucher.findOneAndUpdate(
               {
                 _id: id,
@@ -149,7 +157,8 @@ module.exports = {
                 name,
                 category,
                 nominals,
-                thumbnail: filename,
+                thumbnail: result.secure_url || voucher.thumbnail,
+                cloudinary_id: result.public_id || voucher.cloudinary_id,
               }
             )
 
@@ -188,11 +197,12 @@ module.exports = {
     try {
       const { id } = req.params
       const voucher = await Voucher.findOneAndRemove({ _id: id })
-      let currentImage = `${config.rootPath}/public/uploads/${voucher.thumbnail}`
+      await cloudinary.uploader.destroy(voucher.cloudinary_id)
+      // let currentImage = `${config.rootPath}/public/uploads/${voucher.thumbnail}`
       //Jika ada, file thumbnail akan didelete
-      if (fs.existsSync(currentImage)) {
-        fs.unlinkSync(currentImage)
-      }
+      // if (fs.existsSync(currentImage)) {
+      // fs.unlinkSync(currentImage)
+      // }
       req.flash('alertMessage', 'Berhasil hapus voucher')
       req.flash('alertStatus', 'success')
       res.redirect('/voucher')

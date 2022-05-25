@@ -26,5 +26,8 @@ let voucherSchema = mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
   },
+  cloudinary_id: {
+    type: String,
+  },
 })
 module.exports = mongoose.model('Voucher', voucherSchema)
