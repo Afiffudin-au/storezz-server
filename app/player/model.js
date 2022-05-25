@@ -39,6 +39,9 @@ let playerSchema = mongoose.Schema(
     },
     avatar: { type: String },
     fileName: { type: String },
+    cloudinary_id: {
+      type: String,
+    },
     phoneNumber: {
       type: String,
       require: [true, 'nomor telpon harus diisi'],

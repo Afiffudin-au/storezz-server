@@ -4,13 +4,16 @@ const fs = require('fs')
 const config = require('../../config')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-
+const cloudinary = require('../../utils/cloudinary')
 module.exports = {
   signup: async (req, res, next) => {
     try {
       const payload = req.body
 
       if (req.file) {
+        const result = await cloudinary.uploader.upload(req.file.path, {
+          folder: 'bwa-player',
+        })
         let tmp_path = req.file.path
         let originaExt =
           req.file.originalname.split('.')[
@@ -29,7 +32,11 @@ module.exports = {
 
         src.on('end', async () => {
           try {
-            const player = new Player({ ...payload, avatar: filename })
+            const player = new Player({
+              ...payload,
+              avatar: result.secure_url,
+              cloudinary_id: result.public_id,
+            })
 
             await player.save()
 
