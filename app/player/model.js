@@ -9,6 +9,8 @@ let playerSchema = mongoose.Schema(
     email: {
       type: String,
       require: [true, 'email harus diisi'],
+      match: /.+\@.+\..+/,
+      unique: true,
     },
     name: {
       type: String,
