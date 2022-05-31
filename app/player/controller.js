@@ -8,6 +8,7 @@ const Transaction = require('../transaction/model')
 const path = require('path')
 const fs = require('fs')
 const config = require('../../config')
+const cloudinary = require('../../utils/cloudinary')
 module.exports = {
   landingPage: async (req, res) => {
     try {
@@ -238,6 +239,9 @@ module.exports = {
       if (phoneNumber.length) payload.phoneNumber = phoneNumber
 
       if (req.file) {
+        const result = await cloudinary.uploader.upload(req.file.path, {
+          folder: 'bwa-player',
+        })
         let tmp_path = req.file.path
         let originaExt =
           req.file.originalname.split('.')[
@@ -268,7 +272,8 @@ module.exports = {
             },
             {
               ...payload,
-              avatar: filename,
+              avatar: result.secure_url,
+              cloudinary_id: result.public_id,
             },
             { new: true, runValidators: true }
           )
@@ -279,6 +284,7 @@ module.exports = {
               name: player.name,
               phoneNumber: player.phoneNumber,
               avatar: player.avatar,
+              cloudinary_id: player.cloudinary_id,
             },
           })
         })
