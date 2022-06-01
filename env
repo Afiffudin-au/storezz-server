@@ -1,4 +1,4 @@
-MODE=dev
+MODE=
 SERVICE_NAME=
 MONGO_URL=mongodb+srv://...
 MONGO_URL_DEV=
