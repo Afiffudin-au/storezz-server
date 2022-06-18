@@ -12,7 +12,7 @@ module.exports = {
 
       if (req.file) {
         const result = await cloudinary.uploader.upload(req.file.path, {
-          folder: 'bwa-player',
+          folder: 'bwa/player',
         })
         let tmp_path = req.file.path
         let originaExt =

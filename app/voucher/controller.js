@@ -47,7 +47,9 @@ module.exports = {
       const { name, category, nominals } = req.body
       if (req.file) {
         let tmp_path = req.file.path
-        const result = await cloudinary.uploader.upload(req.file.path)
+        const result = await cloudinary.uploader.upload(req.file.path, {
+          folder: 'bwa/voucher',
+        })
         let originalExt =
           req.file.originalname.split('.')[
             req.file.originalname.split('.').length - 1
@@ -141,9 +143,13 @@ module.exports = {
           try {
             const voucher = await Voucher.findOne({ _id: id })
             // Delete image from cloudinary
-            await cloudinary.uploader.destroy(voucher.cloudinary_id)
+            await cloudinary.uploader.destroy(voucher.cloudinary_id, {
+              folder: 'bwa/voucher',
+            })
             // Upload new image to cloudinary
-            const result = await cloudinary.uploader.upload(req.file.path)
+            const result = await cloudinary.uploader.upload(req.file.path, {
+              folder: 'bwa/voucher',
+            })
             // let currentImage = `${config.rootPath}/public/uploads/${voucher.thumbnail}`
             //Jika ada, file thumbnail akan didelete
             // if (fs.existsSync(currentImage)) {
@@ -197,7 +203,9 @@ module.exports = {
     try {
       const { id } = req.params
       const voucher = await Voucher.findOneAndRemove({ _id: id })
-      await cloudinary.uploader.destroy(voucher.cloudinary_id)
+      await cloudinary.uploader.destroy(voucher.cloudinary_id, {
+        folder: 'bwa/voucher',
+      })
       // let currentImage = `${config.rootPath}/public/uploads/${voucher.thumbnail}`
       //Jika ada, file thumbnail akan didelete
       // if (fs.existsSync(currentImage)) {
